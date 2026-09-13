@@ -994,15 +994,16 @@ ol {
 }
 
 .anime__details__text p {
-	color: #b7b7b7;
-	font-size: 18px;
-	line-height: 30px;
+	color: #878787;
+	font-size: 15px;
+	line-height: 20px;
 	text-overflow: ellipsis;
+	word-spacing: 2px;
 }
 .description-text {
     color: #ccc;
     display: -webkit-box;
-    -webkit-line-clamp: 4;      /* show 4 lines by default */
+    -webkit-line-clamp: 3;      /* show 4 lines by default */
     -webkit-box-orient: vertical;
     overflow: hidden;
 	margin-bottom: -5px;
@@ -1018,15 +1019,17 @@ ol {
     cursor: pointer;
     padding: 4px 0;
     font-size: 1rem;
+	font-size: 14.5px;
+	padding-bottom: 30px;
 }
 .read-more-btn:hover {
 	text-decoration: underline;
 
 }
 .anime__details__pic {
-	height: 440px;
-	border-radius: 5px;
+	height: auto;
 	position: relative;
+	
 }
 
 .anime__details__pic .comment {
@@ -1055,18 +1058,22 @@ ol {
 
 .anime__details__title {
 	margin-bottom: 20px;
+	max-width: 80%;
 }
 
 .anime__details__title h3 {
 	color: #ffffff;
 	font-weight: 700;
 	margin-bottom: 13px;
+	flex: 1 1 auto;
+	min-width: 0;
 }
 
 .anime__details__title span {
 	font-size: 15px;
 	color: #b7b7b7;
 	display: block;
+	margin-bottom: -15px;
 }
 
 .anime__details__rating {
@@ -1143,8 +1150,9 @@ ol {
 	letter-spacing: 2px;
 	text-transform: uppercase;
 	padding: 14px 20px;
-	border-radius: 4px 0 0 4px;
+	border-radius: 10px;
 	margin-right: 1px;
+
 }
 
 .anime__details__btn .watch-btn i {
@@ -1153,7 +1161,9 @@ ol {
 	background: #008181;
 	padding: 11px 5px 16px 8px;
 	color: #ffffff;
-	border-radius: 0 4px 4px 0;
+	border-radius: 10px	;
+	height: 46.5px;
+	object-position: center;
 }
 
 .anime__details__review {
@@ -1216,14 +1226,15 @@ ol {
 .anime__details__form form textarea {
 	width: 100%;
 	font-size: 15px;
-	color: #b7b7b7;
+	color: #ffffff;
 	padding-left: 20px;
 	padding-top: 12px;
 	height: 110px;
 	border: none;
 	border-radius: 5px;
 	resize: none;
-	margin-bottom: 24px;
+	margin-bottom: 20px;
+	background-color: rgb(40, 40, 40);
 }
 
 .anime__details__form form button {
@@ -2054,7 +2065,7 @@ ol {
 	}
 }
 
-@media only screen and (min-width: 1200px) {
+@media only screen and (min-width: 1170px) {
 	.container {
 		max-width: 1170px;
 	}

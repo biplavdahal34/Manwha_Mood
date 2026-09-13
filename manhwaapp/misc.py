@@ -60,8 +60,8 @@ def get_manhwa_byid(manhwa_id):
     r = requests.get(
     f"{url}",
     params={
-    "includes[]" : ["cover_art"],
-    }
+    "includes[]" : ["cover_art",'artist','author']
+     }
     )
 
     if r.status_code == 200:

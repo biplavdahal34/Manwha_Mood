@@ -30,8 +30,9 @@
                                             </div>
                                             <div class="product__item__text">
                                                 <ul>
-                                                    <li>Active</li>
-                                                    <li>Movie</li>
+                                                    {%for genre in genres[loop.index0]%}
+                                                        <li>{{genre}}</li>
+                                                    {%endfor%}
                                                 </ul>
                                                 <h5><a href="{{url_for('details', manhwa_id=manhwa.id)}}">{{ titles[loop.index0] }}</a></h5>
                                             </div>

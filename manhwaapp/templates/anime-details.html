@@ -8,9 +8,9 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="breadcrumb__links">
-                        <a href="./index.html"><i class="fa fa-home"></i> Home</a>
+                        <a href="{{url_for('home')}}"><i class="fa fa-home"></i> Home</a>
                         <a href="./categories.html">Categories</a>
-                        <span>Romance</span>
+                        <span>{{genres[0]}}</span>
                     </div>
                 </div>
             </div>
@@ -25,9 +25,7 @@
                 <div class="row">
                     <div class="col-lg-3">
                         <div class="anime__details__pic ">
-                            <img src="{{ cover_url }}">
-                            <div class="comment"><i class="fa fa-comments"></i> 11</div>
-                            <div class="view"><i class="fa fa-eye"></i> 9141</div>
+                            <img style="border-radius: 13px;" src="{{ cover_url }}">
                         </div>
                     </div>
                     <div class="col-lg-9">
@@ -36,45 +34,35 @@
                                 <h3>{{title}}</h3>
                                 <span>フェイト／ステイナイト, Feito／sutei naito</span>
                             </div>
-                            <div class="anime__details__rating">
-                                <div class="rating">
-                                    <a href="#"><i class="fa fa-star"></i></a>
-                                    <a href="#"><i class="fa fa-star"></i></a>
-                                    <a href="#"><i class="fa fa-star"></i></a>
-                                    <a href="#"><i class="fa fa-star"></i></a>
-                                    <a href="#"><i class="fa fa-star-half-o"></i></a>
-                                </div>
-                                <span>1.029 Votes</span>
-                            </div>
+                            
                             <div class="description-wrapper">
                             <p id="description-text" class="description-text">{{ description }}</p>
-                            <button id="read-more-btn" class="read-more-btn mb-2" style="color: rgb(78, 187, 255);" onclick="toggleDescription()">Read more . . .</button>
+                            <button id="read-more-btn" class="read-more-btn mb-2" onclick="toggleDescription()">Read more . . .</button>
                             </div>
                             <div class="anime__details__widget">
                                 <div class="row">
                                     <div class="col-lg-6 col-md-6">
                                         <ul>
-                                            <li><span>Type:</span> TV Series</li>
-                                            <li><span>Studios:</span> Lerche</li>
-                                            <li><span>Date aired:</span> Oct 02, 2019 to ?</li>
-                                            <li><span>Status:</span> Airing</li>
-                                            <li><span>Genre:</span> Action, Adventure, Fantasy, Magic</li>
+                                            
+                                            <li><span>Artist:</span>{{author_name}}</li>
+                                            <li><span>Chapters:</span> {{chapters}}</li>
+                                            <li><span>Genre:</span>
+                                                {{genres | join(', ')}}
+                                            </li>
                                         </ul>
                                     </div>
                                     <div class="col-lg-6 col-md-6">
                                         <ul>
-                                            <li><span>Scores:</span> 7.31 / 1,515</li>
+                                            <li><span>Released:</span> {{release_date}}</li>
+                                            <li><span>Status:</span> {{status}}</li>
                                             <li><span>Rating:</span> 8.5 / 161 times</li>
-                                            <li><span>Duration:</span> 24 min/ep</li>
-                                            <li><span>Quality:</span> HD</li>
-                                            <li><span>Views:</span> 131,541</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                             <div class="anime__details__btn">
-                                <a href="#" class="follow-btn"><i class="fa fa-heart-o"></i> Follow</a>
-                                <a href="#" class="watch-btn"><span>Watch Now</span> <i
+                                <a href="#" class="follow-btn" style="border-radius: 10px;"><i class="fa fa-heart-o"></i> Follow</a>
+                                <a href="#" class="watch-btn btn-b"><span>Read Now</span> <i
                                     class="fa fa-angle-right"></i></a>
                                 </div>
                             </div>
@@ -88,6 +76,12 @@
                                 <h5>Reviews</h5>
                             </div>
                             <div class="anime__review__item">
+                                <div class="anime__details__form mb-5">
+                                    <form action="#">
+                                        <textarea style="border-radius: 20px;" placeholder="Your Comment"></textarea>
+                                        <button style="border-radius: 12px; margin-left: 5px;" type="submit"><i class="fa fa-location-arrow"></i> Review</button>
+                                    </form>
+                                </div>
                                 <div class="anime__review__item__pic">
                                     <img src="img/anime/review-1.jpg" alt="">
                                 </div>
@@ -143,15 +137,6 @@
                                     <p>Where is the episode 15 ? Slow update! Tch</p>
                                 </div>
                             </div>
-                        </div>
-                        <div class="anime__details__form">
-                            <div class="section-title">
-                                <h5>Your Comment</h5>
-                            </div>
-                            <form action="#">
-                                <textarea placeholder="Your Comment"></textarea>
-                                <button type="submit"><i class="fa fa-location-arrow"></i> Review</button>
-                            </form>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-4">
