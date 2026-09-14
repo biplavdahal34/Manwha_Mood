@@ -1,0 +1,85 @@
+{% extends "main.html" %}
+
+{% block content %}
+
+<div class="reader">
+    <div class="reader__header">
+      <h1 class="reader__title">Chapter {{chapter_num}}</h1>
+      <a href="{{url_for('details', manhwa_id = id)}}" class="reader__subtitle">{{title}}</a>
+    </div>
+  
+    <div class="reader__controls">
+
+      <a href="{{url_for('details', manhwa_id = id)}}" class="pill pill--back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+        <span>Back</span>
+      </a>
+      <div class="pill">Ch. {{chapter_num}}</div>
+    </div>
+  
+    <div class="reader__mode">
+      <div class="mode-toggle" id="modeToggle">
+        <span id="modeLabel">Single page</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+  
+      <div class="mode-dropdown" id="modeDropdown">
+        <button type="button" class="mode-dropdown__item">Single page</button>
+        <button type="button" class="mode-dropdown__item">Long strip</button>
+      </div>
+    </div>
+  
+    <div class="reader__pages" data-chapter-id="{{ chapter_id }}">
+      {% for page_url in page_urls %}
+      <img class="reader__page" referrerpolicy="no-referrer"
+           data-src="{{ host }}/data/{{ chap_hash }}/{{ page_url }}"
+           data-filename="{{ page_url }}">
+      {% endfor %}
+    </div>
+    
+  </div>
+  <script>
+    const readerPages = document.querySelector('.reader__pages');
+    const chapterId = readerPages.dataset.chapterId;
+    const images = document.querySelectorAll('.reader__page');
+    const CONCURRENCY = 3;
+    let index = 0;
+    
+    async function retryImage(img) {
+      try {
+        const res = await fetch(`/api/refresh-host/${chapterId}`);
+        const fresh = await res.json();
+        img.src = `${fresh.host}/data/${fresh.chap_hash}/${img.dataset.filename}`;
+      } catch (e) {
+        loadNext();
+      }
+    }
+    
+    function loadNext() {
+      if (index >= images.length) return;
+      const img = images[index++];
+      if (!img.dataset.src) {
+        loadNext();
+        return;
+      }
+    
+      let retried = false;
+      img.onload = () => loadNext();
+      img.onerror = () => {
+        if (!retried) {
+          retried = true;
+          retryImage(img);
+        } else {
+          loadNext();
+        }
+      };
+    
+      img.src = img.dataset.src;
+    }
+    
+    for (let i = 0; i < CONCURRENCY; i++) {
+      loadNext();
+    }
+    </script>
+
+{% endblock %} 

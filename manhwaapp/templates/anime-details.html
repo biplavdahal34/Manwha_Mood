@@ -55,13 +55,13 @@
                                         <ul>
                                             <li><span>Released:</span> {{release_date}}</li>
                                             <li><span>Status:</span> {{status}}</li>
-                                            <li><span>Rating:</span> 8.5 / 161 times</li>
+                                            <li><span>Rating:</span> {{rating}}</li>
                                         </ul>
                                     </div>
                                 </div>
                             </div>
                             <div class="anime__details__btn">
-                                <a href="#" class="follow-btn" style="border-radius: 10px;"><i class="fa fa-heart-o"></i> Follow</a>
+                                <a href="#" class="follow-btn" style="border-radius: 10px;">+ Follow</a>
                                 <a href="#" class="watch-btn btn-b"><span>Read Now</span> <i
                                     class="fa fa-angle-right"></i></a>
                                 </div>
@@ -69,8 +69,42 @@
                         </div>
                     </div>
                 </div>
+               
                 <div class="row">
                     <div class="col-lg-8 col-md-8">
+                        <div class="section-title">
+                            <h5>Chapters : </h5>
+                        </div>
+                        {%for chap in chap_list%}
+                        <a href="{{url_for('chapter_read', chapter_id = chap_id[loop.index0], manhwa_title = title, chapter_num = chap, id = id )}}">
+                            <div class="chapter-card">
+                                <div class="chapter-left">
+                                <div class="chapter-title-row">
+                                    <span class="flag">🇬🇧</span>
+                                    <span class="chapter-title">{{chap}}</span>
+                                </div>
+                                <div class="chapter-group">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                    <span>goon squad</span>
+                                </div>
+                                </div>
+                            
+                                <div class="chapter-mid">
+                                
+                                </div>
+                            
+                                <div class="chapter-right">
+                                    <div class="chapter-row">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                        <span>5 years ago</span>
+                                    </div>
+                                    <div class="chapter-row">
+                                        <span class="username">fsadddfsa</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {%endfor%}
                         <div class="anime__details__review">
                             <div class="section-title">
                                 <h5>Reviews</h5>
@@ -176,5 +210,5 @@
                 text.classList.toggle('expanded');
                 btn.textContent = text.classList.contains('expanded') ? 'Read less' : 'Read more';
             }
-            </script>
+        </script>
 {% endblock %} 

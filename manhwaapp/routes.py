@@ -4,7 +4,7 @@ from flask import render_template, flash, redirect, url_for, request
 from manhwaapp import app, db
 from manhwaapp.forms import RegisterForm, LoginForm, SearchForm
 from manhwaapp.models import User, Manhwa, MYmanhwalist
-from manhwaapp.misc import latest_list, popular_list, get_manhwa_byid, get_manhwa_byname
+from manhwaapp.misc import latest_list, popular_list, get_manhwa_byid, get_manhwa_byname, stats, chapter_all, get_page_id
 
 
 @app.route("/spage")
@@ -125,9 +125,7 @@ def search():
 
 @app.route("/details/<manhwa_id>")
 def details(manhwa_id):
-
     data = get_manhwa_byid(manhwa_id)
-    print(data)
     if data['api_ok']:
         manhwa = data['response']
         genre = [ tag['attributes']['name']['en'] for tag in manhwa['attributes']['tags'] if tag['attributes']['group'] == 'genre'][:3]
@@ -146,10 +144,27 @@ def details(manhwa_id):
         status = manhwa['attributes'].get('status') or 'N/A'
         chapters = manhwa['attributes'].get('lastChapter') or 'N/A'
         release_date = manhwa['attributes'].get('year') or 'N/A'
+        chapter_info = chapter_all(manhwa_id)
+        chapter_resp = chapter_info['response']
+        chap_id = []
+        for chap in chapter_resp['data']:
+            chap_id.append(chap['id'])
+        print(chap_id)
+        chap_list = chapter_info['chap_num']
+        rate = stats(manhwa_id)
+        rating = str(rate['rating']['average']) if rate else 'N/A'
+        if rating != 'N/A':
+            try:
+                ratings = rating[:rating.index('.') +2]
+            except ValueError:  
+                ratings = 'N/A'
         if bool(manhwa['attributes']['description'].get("en")):
             description = manhwa['attributes']['description']['en']
             if "---" in description:
-                description,_ = manhwa['attributes']['description']['en'].split("---")
+                try:
+                    description,_ = manhwa['attributes']['description']['en'].split("---")
+                except ValueError:
+                    description = manhwa['attributes']['description']['en']
         else:
             description = "No Description Available"
         if cover_rel and "attributes" in cover_rel:
@@ -166,6 +181,15 @@ def details(manhwa_id):
         manga_id = []
         author = []
         status = []
+        ratings = 'N/A'
+        genre = []
+        author_name = "N/A"
+        chapters = 'N/A'
+        release_date = 'N/A'
+        chap_list = []
+        chap_id = []
+        id = []
+        
 
     return render_template("anime-details.html",
                             manhwa = manhwa, 
@@ -178,5 +202,27 @@ def details(manhwa_id):
                             author_name = author_name,
                             status = status,
                             chapters = chapters,
-                            release_date = release_date
+                            release_date = release_date,
+                            rating = ratings,
+                            chap_list = chap_list,
+                            chap_id = chap_id,
+                            id =manga_id
                             )
+
+
+@app.route("/chapter/<chapter_id>")
+def chapter_read(chapter_id):
+    page_data = get_page_id(chapter_id)
+    chap_hash = page_data['chap_hash']
+    host = page_data['host']
+    page_urls = page_data['data']
+    print(page_urls)
+    manhwa_title = request.args.get('manhwa_title')
+    chapter_num = request.args.get('chapter_num')
+    manhwa_id = request.args.get('id')
+    return render_template("chapter_read.html", id=manhwa_id, title = manhwa_title, chapter_num = chapter_num, host = host, page_urls = page_urls, chap_hash =chap_hash)
+
+@app.route("/api/refresh-host/<chapter_id>")
+def refresh_host(chapter_id):
+    page_data = get_page_id(chapter_id)
+    return {"host": page_data["host"], "chap_hash": page_data["chap_hash"]}

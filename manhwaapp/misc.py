@@ -68,3 +68,41 @@ def get_manhwa_byid(manhwa_id):
         response = r.json()['data']
         return {"api_ok" :True, "response": response}
     return {"api_ok":False, "response_json": None}
+
+def stats(manga_id):
+    base_url = "https://api.mangadex.org"
+
+    r = requests.get(f"{base_url}/statistics/manga/{manga_id}",
+     params={'translatedLanguage[]': 'en'}
+     )
+     
+
+    
+    if r.status_code == 200:
+       return r.json()["statistics"][manga_id]
+
+def chapter_all(manga_id):
+    base_url = "https://api.mangadex.org"
+
+    r = requests.get(f"{base_url}/manga/{manga_id}/feed",
+    params={"order[chapter]" : "desc",
+    "translatedLanguage[]" : 'en'})
+    chap_num = []
+    for chapter in r.json()["data"]:
+        chap_num.append(chapter['attributes']['chapter'])
+
+    return {"response" : r.json(),"chap_num": chap_num} 
+
+def get_page_id(chapter_id):
+    base_url = "https://api.mangadex.org"
+
+    r = requests.get(f"{base_url}/at-home/server/{chapter_id}"
+    )
+    if r.status_code != 200:
+        print("at-home error:", r.status_code, r.text)
+    r_json = r.json()
+    print(r_json)
+    host = r_json["baseUrl"]
+    chapter_hash = r_json["chapter"]["hash"]
+    data = r_json["chapter"]["data"]
+    return {'data':data,'host': host,"chap_hash": chapter_hash}
