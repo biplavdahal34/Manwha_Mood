@@ -32,3 +32,8 @@ class LoginForm(FlaskForm):
 
 class SearchForm(FlaskForm):
     search_name = StringField("Search", validators=[DataRequired()])
+
+class OTPForm(FlaskForm):
+    otp = StringField("OTP", validators=[DataRequired()])
+    submit = SubmitField('Verify')
+

@@ -31,7 +31,7 @@
   
     <div class="reader__pages" data-chapter-id="{{ chapter_id }}">
       {% for page_url in page_urls %}
-      <img class="reader__page" referrerpolicy="no-referrer"
+      <img class="reader__page"
            data-src="{{ host }}/data/{{ chap_hash }}/{{ page_url }}"
            data-filename="{{ page_url }}">
       {% endfor %}
@@ -39,20 +39,22 @@
     
   </div>
   <script>
-    const readerPages = document.querySelector('.reader__pages');
-    const chapterId = readerPages.dataset.chapterId;
     const images = document.querySelectorAll('.reader__page');
     const CONCURRENCY = 3;
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY = 800; // ms
     let index = 0;
     
-    async function retryImage(img) {
-      try {
-        const res = await fetch(`/api/refresh-host/${chapterId}`);
-        const fresh = await res.json();
-        img.src = `${fresh.host}/data/${fresh.chap_hash}/${img.dataset.filename}`;
-      } catch (e) {
-        loadNext();
-      }
+    function loadImage(img, attempt = 0) {
+      img.onload = () => loadNext();
+      img.onerror = () => {
+        if (attempt < MAX_RETRIES) {
+          setTimeout(() => loadImage(img, attempt + 1), RETRY_DELAY);
+        } else {
+          loadNext(); // give up on this page, move on
+        }
+      };
+      img.src = img.dataset.src;
     }
     
     function loadNext() {
@@ -62,19 +64,7 @@
         loadNext();
         return;
       }
-    
-      let retried = false;
-      img.onload = () => loadNext();
-      img.onerror = () => {
-        if (!retried) {
-          retried = true;
-          retryImage(img);
-        } else {
-          loadNext();
-        }
-      };
-    
-      img.src = img.dataset.src;
+      loadImage(img);
     }
     
     for (let i = 0; i < CONCURRENCY; i++) {

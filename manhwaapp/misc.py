@@ -1,4 +1,11 @@
 import requests
+import secrets
+from manhwaapp import mail
+from flask_mail import Message
+import os
+import dotenv
+
+dotenv.load_dotenv()
 
 
 def latest_list(limit=8):
@@ -106,3 +113,30 @@ def get_page_id(chapter_id):
     chapter_hash = r_json["chapter"]["hash"]
     data = r_json["chapter"]["data"]
     return {'data':data,'host': host,"chap_hash": chapter_hash}
+
+def otp_send(email):
+    otp = secrets.randbelow(1000000)
+    otp = str(otp).zfill(6)
+    msg = Message('OTP for ManhwaMood',sender=os.getenv('MAIL_USERNAME'), recipients=[email])
+    msg.body = f"""
+    
+    Hello New User! Welcome To ManhwaMood. 
+
+    Hope you have a fun time reading through our catalog.
+
+    Your OTP is : {otp}
+    
+    Hope You Have A Great Day
+
+    """
+
+    try:
+        mail.send(msg)
+        print("========== EMAIL SENT ==========")
+    except Exception as e:
+        print("========== EMAIL ERROR ==========")
+        print(type(e).__name__)
+        print(e)
+        raise
+
+    return otp

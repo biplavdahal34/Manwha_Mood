@@ -1,11 +1,10 @@
 import bcrypt   
 from flask_login import login_manager, login_required, login_user, logout_user, current_user, LoginManager
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, session
 from manhwaapp import app, db
-from manhwaapp.forms import RegisterForm, LoginForm, SearchForm
+from manhwaapp.forms import RegisterForm, LoginForm, SearchForm, OTPForm
 from manhwaapp.models import User, Manhwa, MYmanhwalist
-from manhwaapp.misc import latest_list, popular_list, get_manhwa_byid, get_manhwa_byname, stats, chapter_all, get_page_id
-
+from manhwaapp.misc import latest_list, popular_list, get_manhwa_byid, get_manhwa_byname, stats, chapter_all, get_page_id, otp_send
 
 @app.route("/spage")
 def startpage():
@@ -15,12 +14,12 @@ def startpage():
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        new_user = User(email = form.email.data, username = form.username.data, password = bcrypt.hashpw(form.password.data.encode('utf-8'), bcrypt.gensalt()))
-        db.session.add(new_user)
-        db.session.commit()
-        flash("Account Has Been Created!", 'success')
-        print('success')
-        return redirect(url_for('login'))   
+        session['email'] = form.email.data
+        session['username'] = form.username.data
+        session['password'] = bcrypt.hashpw(form.password.data.encode('utf-8'), bcrypt.gensalt())
+        otp = otp_send(form.email.data)
+        session['otp'] = otp
+        return redirect(url_for('otp_filling_page'))
     return render_template("register.html", form = form)
 
 @app.route('/login', methods=['GET','POST'])
@@ -38,6 +37,32 @@ def login():
                 return redirect(url_for('home'))
 
     return render_template('login.html', form=form)
+    
+@app.route("/fill_otp", methods=['POST','GET'])
+def otp_filling_page():
+    form = OTPForm()
+    otp = session.get('otp')
+    print(f'otp = {otp}')
+    if request.method == 'POST':
+        print("POST request received")
+        print("form data:", request.form)
+        print("form errors:", form.errors)
+    if form.validate_on_submit(): 
+        print("form otp : ", form.otp.data)
+        if form.otp.data == otp:
+            new_user = User(email = session.get("email"), username = session.get('username'), password = session.get('password') )
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user)
+            flash("Account Has Been Created!", 'success')
+            print('success')
+            session.pop('email', None)
+            session.pop('username', None)
+            session.pop('password', None)
+            session.pop('otp', None)
+            return redirect(url_for('home'))   
+
+    return render_template('otp_input_page.html', form = form)
 
 
 @app.route("/")
@@ -70,9 +95,9 @@ def home():
     popular = popular_list()
     for manhwa in popular['response']:
         alttitles =  manhwa['attributes']['altTitles']
-        if (tag['attributes']['name'].get('en', '') for tag in manga['attributes']['tags']):
-            genree = [tag['attributes']['name']['en'] for tag in manga['attributes']['tags'] if tag['attributes']['group'] == 'genre'][:2]
-            genre_popular.append(genree)
+        genree = [tag['attributes']['name']['en'] for tag in manhwa['attributes']['tags'] if tag['attributes']['group'] == 'genre'][:2]
+        genre_popular.append(genree)
+        print(genre_popular)
         if alttitles:
             en_title = next((title['en'] for title in alttitles if "en" in title),None)
             if en_title:
