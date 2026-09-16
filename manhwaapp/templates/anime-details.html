@@ -74,103 +74,39 @@
                         <div class="section-title">
                             <h5>Chapters : </h5>
                         </div>
-                        {%for chap in chap_list%}
-                        <a href="{{url_for('chapter_read', chapter_id = chap_id[loop.index0], manhwa_title = title, chapter_num = chap, id = id )}}">
-                            <div class="chapter-card">
-                                <div class="chapter-left">
-                                <div class="chapter-title-row">
-                                    <span class="flag">🇬🇧</span>
-                                    <span class="chapter-title">{{chap}}</span>
-                                </div>
-                                <div class="chapter-group">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                                    <span>goon squad</span>
-                                </div>
-                                </div>
-                            
-                                <div class="chapter-mid">
-                                
-                                </div>
-                            
-                                <div class="chapter-right">
-                                    <div class="chapter-row">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                                        <span>5 years ago</span>
+                        <div class="chapter-list" id="chapterList">
+                            {% for chap in chap_list %}
+                                <a href="{{url_for('chapter_read', chapter_id = chap_id[loop.index0], manhwa_title = title, chapter_num = chap, id = id )}}"
+                                   class="chapter-entry {{ 'hidden' if loop.index > 5 else '' }}">
+                                    <div class="chapter-card">
+                                        <div class="chapter-left">
+                                            <div class="chapter-title-row">
+                                                <span class="flag">🇬🇧</span>
+                                                <span class="chapter-title">{{chap}}</span>
+                                            </div>
+                                            <div class="chapter-group">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                                                <span>goon squad</span>
+                                            </div>
+                                        </div>
+                        
+                                        <div class="chapter-mid"></div>
+                        
+                                        <div class="chapter-right">
+                                            <div class="chapter-row">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                                                <span>5 years ago</span>
+                                            </div>
+                                            <div class="chapter-row">
+                                                <span class="username">fsadddfsa</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="chapter-row">
-                                        <span class="username">fsadddfsa</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                        {%endfor%}
-                        <div class="anime__details__review">
-                            <div class="section-title">
-                                <h5>Reviews</h5>
-                            </div>
-                            <div class="anime__review__item">
-                                <div class="anime__details__form mb-5">
-                                    <form action="#">
-                                        <textarea style="border-radius: 20px;" placeholder="Your Comment"></textarea>
-                                        <button style="border-radius: 12px; margin-left: 5px;" type="submit"><i class="fa fa-location-arrow"></i> Review</button>
-                                    </form>
-                                </div>
-                                <div class="anime__review__item__pic">
-                                    <img src="img/anime/review-1.jpg" alt="">
-                                </div>
-                                <div class="anime__review__item__text">
-                                    <h6>Chris Curry - <span>1 Hour ago</span></h6>
-                                    <p>whachikan Just noticed that someone categorized this as belonging to the genre
-                                    "demons" LOL</p>
-                                </div>
-                            </div>
-                            <div class="anime__review__item">
-                                <div class="anime__review__item__pic">
-                                    <img src="img/anime/review-2.jpg" alt="">
-                                </div>
-                                <div class="anime__review__item__text">
-                                    <h6>Lewis Mann - <span>5 Hour ago</span></h6>
-                                    <p>Finally it came out ages ago</p>
-                                </div>
-                            </div>
-                            <div class="anime__review__item">
-                                <div class="anime__review__item__pic">
-                                    <img src="img/anime/review-3.jpg" alt="">
-                                </div>
-                                <div class="anime__review__item__text">
-                                    <h6>Louis Tyler - <span>20 Hour ago</span></h6>
-                                    <p>Where is the episode 15 ? Slow update! Tch</p>
-                                </div>
-                            </div>
-                            <div class="anime__review__item">
-                                <div class="anime__review__item__pic">
-                                    <img src="img/anime/review-4.jpg" alt="">
-                                </div>
-                                <div class="anime__review__item__text">
-                                    <h6>Chris Curry - <span>1 Hour ago</span></h6>
-                                    <p>whachikan Just noticed that someone categorized this as belonging to the genre
-                                    "demons" LOL</p>
-                                </div>
-                            </div>
-                            <div class="anime__review__item">
-                                <div class="anime__review__item__pic">
-                                    <img src="img/anime/review-5.jpg" alt="">
-                                </div>
-                                <div class="anime__review__item__text">
-                                    <h6>Lewis Mann - <span>5 Hour ago</span></h6>
-                                    <p>Finally it came out ages ago</p>
-                                </div>
-                            </div>
-                            <div class="anime__review__item">
-                                <div class="anime__review__item__pic">
-                                    <img src="img/anime/review-6.jpg" alt="">
-                                </div>
-                                <div class="anime__review__item__text">
-                                    <h6>Louis Tyler - <span>20 Hour ago</span></h6>
-                                    <p>Where is the episode 15 ? Slow update! Tch</p>
-                                </div>
-                            </div>
+                                </a>
+                            {% endfor %}
                         </div>
+
+                        <button id="readMoreBtn" class="read-more-btn" style="background-color: #008181;  border-radius: 10px; height: 10px; width: 100px; margin-left: 300px; margin-top: 10px;">Show More</button>
                     </div>
                     <div class="col-lg-4 col-md-12" style="margin-left: -50px; margin-top: -25px;">
                         <div class="trending-sidebar">
@@ -205,10 +141,27 @@
                 text.classList.toggle('expanded');
                 btn.textContent = text.classList.contains('expanded') ? 'Read less' : 'Read more';
             }
+            let expanded = false;
+
+            document.getElementById('readMoreBtn').addEventListener('click', function () {
+                const hiddenChapters = document.querySelectorAll('#chapterList .chapter-entry');
+                expanded = !expanded;
+
+                hiddenChapters.forEach((chapter, index) => {
+                    if (index >= 5) {
+                        chapter.classList.toggle('hidden', !expanded);
+                    }
+                });
+
+                this.textContent = expanded ? 'Show Less' : 'Read More';
+            });
         </script>
 
 
 <style>
+    .hidden {
+  display: none;
+}
     .trending-row {
       display: flex;
       align-items: center;
@@ -296,4 +249,5 @@
     height: 100%;
     }
     </style>
+
 {% endblock %} 
