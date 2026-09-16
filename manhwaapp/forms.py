@@ -17,9 +17,6 @@ class RegisterForm(FlaskForm):
             raise ValidationError("Username Already Exists. Please Try Another One!")
 
     def validate_email(self, field):
-        if not field.data.lower().endswith(("@gmail.com", "@yahoo.com", "@hotmail.com")):
-            raise ValidationError("Please Enter A Valid Email!")
-
         exiting_email = User.query.filter_by(email = field.data).first()
         if exiting_email:
             raise ValidationError("Email Already Exists, Please Enter Another One!")

@@ -4,6 +4,7 @@ from manhwaapp import mail
 from flask_mail import Message
 import os
 import dotenv
+from datetime import datetime, timedelta
 
 dotenv.load_dotenv()
 
@@ -140,3 +141,15 @@ def otp_send(email):
         raise
 
     return otp
+
+def get_latest_popular(days_back, limit):
+    since_time = (datetime.utcnow() - timedelta(days=days_back)).isoformat(timespec='seconds')
+    r = requests.get(f"https://api.mangadex.org/manga",
+    params={"order[followedCount]" : "desc",
+    "availableTranslatedLanguage[]" : 'en',
+    "createdAtSince" : since_time,
+    "limit": limit,
+    "includes[]": "cover_art"}
+     )    
+    response = r.json()
+    return response['data']

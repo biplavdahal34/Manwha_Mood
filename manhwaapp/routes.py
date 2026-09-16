@@ -1,26 +1,58 @@
-import bcrypt   
+
+import bcrypt, time, hmac
 from flask_login import login_manager, login_required, login_user, logout_user, current_user, LoginManager
 from flask import render_template, flash, redirect, url_for, request, session
 from manhwaapp import app, db
 from manhwaapp.forms import RegisterForm, LoginForm, SearchForm, OTPForm
 from manhwaapp.models import User, Manhwa, MYmanhwalist
-from manhwaapp.misc import latest_list, popular_list, get_manhwa_byid, get_manhwa_byname, stats, chapter_all, get_page_id, otp_send
+from manhwaapp.misc import latest_list, popular_list, get_manhwa_byid, get_manhwa_byname, stats, chapter_all, get_page_id, otp_send, get_latest_popular
 
 @app.route("/spage")
 def startpage():
     return render_template("startpage.html")
-
+@app.route("/")
 @app.route("/register", methods=['GET','POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('home'))
     form = RegisterForm()
     if form.validate_on_submit():
+        session['otp'] = otp_send(form.email.data)
+        session['otp_made_time'] = time.time()
         session['email'] = form.email.data
         session['username'] = form.username.data
         session['password'] = bcrypt.hashpw(form.password.data.encode('utf-8'), bcrypt.gensalt())
-        otp = otp_send(form.email.data)
-        session['otp'] = otp
         return redirect(url_for('otp_filling_page'))
     return render_template("register.html", form = form)
+
+@app.route("/fill_otp", methods=['POST','GET'])
+def otp_filling_page():
+    form = OTPForm()
+    otp_expiry_time = 500
+    email = session.get("email")
+    otp_making_time = session.get('otp_made_time')
+    otp = session.get('otp')
+    if request.method == 'POST':
+        if form.validate_on_submit(): 
+            if (otp_making_time - time.time()) < otp_expiry_time:
+                comapare = hmac.compare_digest(form.otp.data, otp)
+                if comapare == True:
+                    new_user = User(email = session.get("email"), username = session.get('username'), password = session.get('password') )
+                    db.session.add(new_user)
+                    db.session.commit()
+                    login_user(new_user)
+                    flash("Account Has Been Created!", 'success')
+                    session.pop('email', None)
+                    session.pop('username', None)
+                    session.pop('password', None)
+                    session.pop('otp', None)
+                    return redirect(url_for('home'))
+                else:
+                  flash("Inccorect OTP", 'danger')
+            else:
+                flash('Sorry The OTP Time has Expired', 'danger')
+
+    return render_template('otp_input_page.html', form = form, email = email)
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -38,34 +70,7 @@ def login():
 
     return render_template('login.html', form=form)
     
-@app.route("/fill_otp", methods=['POST','GET'])
-def otp_filling_page():
-    form = OTPForm()
-    otp = session.get('otp')
-    print(f'otp = {otp}')
-    if request.method == 'POST':
-        print("POST request received")
-        print("form data:", request.form)
-        print("form errors:", form.errors)
-    if form.validate_on_submit(): 
-        print("form otp : ", form.otp.data)
-        if form.otp.data == otp:
-            new_user = User(email = session.get("email"), username = session.get('username'), password = session.get('password') )
-            db.session.add(new_user)
-            db.session.commit()
-            login_user(new_user)
-            flash("Account Has Been Created!", 'success')
-            print('success')
-            session.pop('email', None)
-            session.pop('username', None)
-            session.pop('password', None)
-            session.pop('otp', None)
-            return redirect(url_for('home'))   
 
-    return render_template('otp_input_page.html', form = form)
-
-
-@app.route("/")
 @app.route("/home")
 def home():
     latest_manhwa_titles = []
@@ -97,7 +102,6 @@ def home():
         alttitles =  manhwa['attributes']['altTitles']
         genree = [tag['attributes']['name']['en'] for tag in manhwa['attributes']['tags'] if tag['attributes']['group'] == 'genre'][:2]
         genre_popular.append(genree)
-        print(genre_popular)
         if alttitles:
             en_title = next((title['en'] for title in alttitles if "en" in title),None)
             if en_title:
@@ -112,8 +116,33 @@ def home():
                 if popular_cover_rel and "attributes" in popular_cover_rel:
                     filename = popular_cover_rel['attributes']['fileName']
                     popular_cover_url.append(f'https://uploads.mangadex.org/covers/{manga_id}/{filename}')
-    return render_template('home.html', popular_titles = popular_manhwa_titles, latest_titles = latest_manhwa_titles, popular_manhwas = popular["response"], latest_manhwas = latest['response'], api_ok= api_ok,
-                            searched = bool(popular), popular_cover_url = popular_cover_url, latest_cover_url = latest_cover_url, genre_popular = genre_popular, genre_latest= genre_latest)
+
+
+    trending_titles = []
+    genres_trending = []
+    latest_popular = get_latest_popular(limit=10,days_back=7)
+    for manhwa in latest_popular:
+        alttitles =  manhwa['attributes']['altTitles']
+        genre_trending= [tag['attributes']['name']['en'] for tag in manhwa['attributes']['tags'] if tag['attributes']['group'] == 'genre'][:2]
+        genres_trending.append(genre_trending)
+        if alttitles:
+            en_title_trending = next((title['en'] for title in alttitles if "en" in title),None)
+            if en_title_trending:
+               trending_titles.append(en_title_trending)
+            else:
+                trending_titles.append(next(iter(manhwa['attributes']['title'].values()),"Title Not Availabe"))
+            trending_cover_url = []
+            for manga in latest_popular:
+                manga_id_popular = manga["id"]
+                trending_cover_rel = next((rel for rel in manga['relationships'] if rel['type'] == "cover_art"), None)
+                print("Cover relationship:", trending_cover_rel)
+                if trending_cover_rel and "attributes" in trending_cover_rel:
+                    filename = trending_cover_rel['attributes']['fileName']
+                    trending_cover_url.append(f'https://uploads.mangadex.org/covers/{manga_id_popular}/{filename}')
+            print(trending_cover_url)
+
+    return render_template('home.html', popular_titles = popular_manhwa_titles, latest_titles = latest_manhwa_titles, trending_titles = trending_titles, popular_manhwas = popular["response"], latest_manhwas = latest['response'], trending_manhwas = latest_popular, api_ok= api_ok,
+                            searched = bool(popular), popular_cover_url = popular_cover_url, latest_cover_url = latest_cover_url, trending_cover_url = trending_cover_url, genre_popular = genre_popular, genre_latest= genre_latest, genre_trending = genre_trending)
 
 @app.route("/search")
 def search():
@@ -174,7 +203,7 @@ def details(manhwa_id):
         chap_id = []
         for chap in chapter_resp['data']:
             chap_id.append(chap['id'])
-        print(chap_id)
+        genres_trending = []
         chap_list = chapter_info['chap_num']
         rate = stats(manhwa_id)
         rating = str(rate['rating']['average']) if rate else 'N/A'
@@ -197,6 +226,27 @@ def details(manhwa_id):
             cover_url = f'https://uploads.mangadex.org/covers/{manga_id}/{filename}'
         else:
             api_ok = True
+        trending_titles = []
+        latest_popular = get_latest_popular(limit=10,days_back=7)
+        for manhwa in latest_popular:
+            alttitles =  manhwa['attributes']['altTitles']
+            genre_trending= [tag['attributes']['name']['en'] for tag in manhwa['attributes']['tags'] if tag['attributes']['group'] == 'genre'][:2]
+            genres_trending.append(genre_trending)
+            if alttitles:
+                en_title_trending = next((title['en'] for title in alttitles if "en" in title),None)
+                if en_title_trending:
+                    trending_titles.append(en_title_trending)
+                else:
+                    trending_titles.append(next(iter(manhwa['attributes']['title'].values()),"Title Not Availabe"))
+                trending_cover_url = []
+                for manga in latest_popular:
+                    manga_id_popular = manga["id"]
+                    trending_cover_rel = next((rel for rel in manga['relationships'] if rel['type'] == "cover_art"), None)
+                    print("Cover relationship:", trending_cover_rel)
+                    if trending_cover_rel and "attributes" in trending_cover_rel:
+                        filename = trending_cover_rel['attributes']['fileName']
+                        trending_cover_url.append(f'https://uploads.mangadex.org/covers/{manga_id_popular}/{filename}')
+                print(trending_cover_url)
     else:
         api_ok = False
         manhwa = []
@@ -214,6 +264,10 @@ def details(manhwa_id):
         chap_list = []
         chap_id = []
         id = []
+        trending_titles = []
+        trending_cover_url = []
+        latest_popular = []
+        genre_trending = []
         
 
     return render_template("anime-details.html",
@@ -231,7 +285,7 @@ def details(manhwa_id):
                             rating = ratings,
                             chap_list = chap_list,
                             chap_id = chap_id,
-                            id =manga_id
+                            id =manga_id, trending_titles = trending_titles, trending_manhwas = latest_popular, trending_cover_url = trending_cover_url, genre_trending = genre_trending
                             )
 
 
@@ -241,7 +295,6 @@ def chapter_read(chapter_id):
     chap_hash = page_data['chap_hash']
     host = page_data['host']
     page_urls = page_data['data']
-    print(page_urls)
     manhwa_title = request.args.get('manhwa_title')
     chapter_num = request.args.get('chapter_num')
     manhwa_id = request.args.get('id')

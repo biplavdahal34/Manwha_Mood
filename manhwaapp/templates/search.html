@@ -3,9 +3,9 @@
 {% block content %}
     <section class="product spad">
         <div class="container">
-            <div class="row">
-                <div class="col-lg-8">
-                    <div class="trending__product">
+            <div class="row" style="width: 1000px;">
+                <div class="col-lg-7">
+                    <div class="trending__product" style="padding-left: 50px; margin-right: 80px;">
                         <div class="row">
                             <div class="col-lg-8 col-md-8 col-sm-8 mb-3">
                                 <div class="section-title">
@@ -44,6 +44,26 @@
                                         <h5 style="color: #ffffff;">No results found for "{{ request.args.get('q', '') }}". Please Check Your Search</h5>
                                     </div>
                                 {% endif %}
+                            </div>
+
+                            <div class="col-lg-4 col-md-12" style="padding-left: 0px;">
+                                <div class="trending-sidebar">
+                                    <div class="col-lg-8 col-md-8 col-sm-8">
+                                        <div class="section-title">
+                                            <h5>trending this week</h5>
+                                        </div>
+                                    </div>
+                                    <ol class="trending-list">
+                                        <li class="trending-row" style="background-color: rgb(78, 78, 78); border-radius: 10px; padding-right: 0px;">
+                                            <span class="trending-rank">10</span>
+                                            <div class="trending-cover" style="background-image: url(#)"></div>
+                                            <div class="trending-info">
+                                                <div class="trending-title">chainsawman</div>
+                                                <div class="trending-meta">Ch. 45<span class="dot">·</span>4.3</div>
+                                            </div>
+                                        </li>
+                                    </ol>
+                                </div>
                             </div>
                         </div>
                     </div>

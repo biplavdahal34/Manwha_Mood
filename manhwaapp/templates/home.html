@@ -9,80 +9,207 @@
                         {% if not searched %}
                             {# nothing yet, or a default/trending view #}
                         {% elif not api_ok %}
-                            <div class="col-lg-12 text-center" style="padding: 40px 0;">
+                            <div class="col-lg-12 text-center">
                                 <h5 style="color: #ffffff;">Site Temporarily Unavailable</h5>
                             </div>
                         {% elif popular_manhwas and latest_manhwas %}
                             <div class="row">
-                                <div class="col-lg-8 col-md-8 col-sm-8">
-                                    <div class="section-title">
-                                        <h4>All-Time Popular</h4>
-                                    </div>
-                                </div>
-                                <div class="col-lg-4 col-md-4 col-sm-4">
-                                    <div class="btn__all">
-                                        <a href="#" class="primary-btn header-nav">View All →</a>
-                                    </div>  
-                                </div>
-                                <div class="row">
-                                    {% for manhwa in popular_manhwas %}
-                                        <div class="col-lg-3 col-md-4 col-sm-8">
-                                            <div class="product__item">
-                                                <div >
-                                                    <a href="{{url_for('details', manhwa_id = manhwa.id)}}">
-                                                    <img class="product__item__pic_mainpage set-bg cover-img" src="{{ popular_cover_url[loop.index0] }}">
-                                                    </a>
-                                                </div>
-                                                <div class="product__item__text">
-                                                    <ul>
-                                                        {%for genre in genre_popular[loop.index0]%}
-                                                            <li>{{genre}}</li>
-                                                        {%endfor%}
-                                                    </ul>
-                                                    <h5><a href="{{ url_for('details', manhwa_id = manhwa.id) }}">{{ popular_titles[loop.index0] }}</a></h5>
-                                                </div>
+                            
+                                <div class="col-lg-8 col-md-12" style="padding-left: 20px;">
+                            
+                                    <!-- All-Time Popular -->
+                                    <div class="row">
+                                        <div class="col-lg-8 col-md-8 col-sm-8">
+                                            <div class="section-title">
+                                                <h4>All-Time Popular</h4>
                                             </div>
                                         </div>
-                                    {% endfor %}
+                                        <div class="col-lg-4 col-md-4 col-sm-4">
+                                            <div class="btn__all">
+                                                <a href="#" class="primary-btn header-nav">View All →</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        {% for manhwa in popular_manhwas %}
+                                            <div class="col-lg-3 col-md-4 col-sm-8">
+                                                <div class="product__item">
+                                                    <div>
+                                                        <a href="{{url_for('details', manhwa_id = manhwa.id)}}">
+                                                            <img class="product__item__pic_mainpage set-bg cover-img" src="{{ popular_cover_url[loop.index0] }}">
+                                                        </a>
+                                                    </div>
+                                                    <div class="product__item__text">
+                                                        <ul>
+                                                            {% for genre in genre_popular[loop.index0] %}
+                                                                <li>{{genre}}</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                        <h5><a href="{{ url_for('details', manhwa_id = manhwa.id) }}">{{ popular_titles[loop.index0] }}</a></h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                            
+                                    <!-- Latest Releases -->
+                                    <div class="row">
+                                        <div class="col-lg-8 col-md-8 col-sm-8">
+                                            <div class="section-title">
+                                                <h4 style="margin-left: 5px;">Latest Releases</h4>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-4 col-sm-4">
+                                            <div class="btn__all">
+                                                <a href="#" class="primary-btn header-nav">View All →</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        {% for manhwa in latest_manhwas %}
+                                            <div class="col-lg-3 col-md-4 col-sm-8">
+                                                <div class="product__item">
+                                                    <div>
+                                                        <a href="{{url_for('details', manhwa_id=manhwa.id)}}">
+                                                            <img class="product__item__pic_mainpage set-bg" src="{{ latest_cover_url[loop.index0] }}">
+                                                        </a>
+                                                    </div>
+                                                    <div class="product__item__text">
+                                                        <ul>
+                                                            {% for genre in genre_latest[loop.index0] %}
+                                                                <li>{{genre}}</li>
+                                                            {% endfor %}
+                                                        </ul>
+                                                        <h5><a href="{{url_for('details', manhwa_id=manhwa.id)}}">{{ latest_titles[loop.index0] }}</a></h5>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                            
                                 </div>
-                                <div class="row">
-                                    <div class="col-lg-8 col-md-8 col-sm-8">
-                                        <div class="section-title">
-                                            <h4 style="margin-left: 5px;">Latest Releases</h4>
+                            
+                                <div class="col-lg-4 col-md-12" style="padding-left: 0px;">
+                                    <div class="trending-sidebar">
+                                        <div class="col-lg-8 col-md-8 col-sm-8">
+                                            <div class="section-title">
+                                                <h5>trending this week</h5>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-4">
-                                        <div class="btn__all">
-                                            <a href="#" class="primary-btn header-nav">View All →</a>
-                                        </div>
-                                    </div>
-                                <div class="row">
-                                    {% for manhwa in latest_manhwas %}
                                         
-                                        <div class="col-lg-3 col-md-4 col-sm-8">
-                                            <div class="product__item">
-                                                <div >
-                                                    <a href="{{url_for('details', manhwa_id=manhwa.id)}}">
-                                                    <img class="product__item__pic_mainpage set-bg" src="{{ latest_cover_url[loop.index0] }}">
-                                                    </a>
-                                                </div>
-                                                <div class="product__item__text">
-                                                    <ul>
-                                                        {%for genre in genre_latest[loop.index0]%}
-                                                            <li>{{genre}}</li>
-                                                        {%endfor%}
-                                                    </ul>
-                                                    <h5><a href="{{url_for('details', manhwa_id=manhwa.id)}}">{{ latest_titles[loop.index0] }}</a></h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    {% endfor %}  
+                                            {%for manhwa in trending_manhwas%}
+                                            <ol class="trending-list mb-2"></ol>
+                                                <a href="{{url_for('details', manhwa_id=manhwa.id)}}">
+                                                    <li class="trending-row" style="background-color: rgb(31, 31, 31); border-radius: 10px; padding-right: 20px;">
+                                                            <span class="trending-rank text-muted">{{loop.index}}</span>
+                                                            <div class="trending-cover">
+                                                                <img src="{{trending_cover_url[loop.index0]}}">
+                                                            </div>
+                                                            <div class="trending-info">
+                                                                <div class="trending-title">{{trending_titles[loop.index0]}}</div>
+                                                                <div class="trending-meta">Ch. 45<span class="dot">·</span>4.3</div>
+                                                            </div>
+                                                    </li>
+                                                </a>
+                                            </ol>
+                                            {%endfor%}
+                                        
+                                    </div>
                                 </div>
-                            </div>          
+                            
+                            </div>
+                        {% endif %}
                     </div>
-                </div>  {% endif %}
-            </div>
+                </div>
+            </div> 
         </div>
     </section>
+
+<style>
+    .trending-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 0;
+      cursor: pointer;
+      list-style: none;
+      padding-left: 20px;
+    }
+    
+    .trending-rank {
+      width: 28px;
+      font-size: 22px;
+      font-weight: 800;
+      text-align: center;
+      flex-shrink: 0;
+      color: #aaaaaa;
+    }
+    
+    .trending-row.top .trending-rank {
+      color: #2dd4bf;
+    }
+    
+    .trending-cover {
+    width: 44px;
+    height: 64px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    background-size: contain;
+    background-position: center;
+    background-color: #1f1f1f;
+    overflow: hidden;
+    flex-shrink: 0;
+    }
+    .trending-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    opacity: 0.8;
+    }
+
+    
+    .trending-info {
+      min-width: 0;
+    }
+    
+    .trending-title {
+      color: rgb(232, 232, 232);
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .trending-meta {
+      color: #9ca3af;
+      font-size: 13px;
+      margin-top: 2px;
+    }
+    
+    .trending-meta .dot {
+      margin: 0 6px;
+    }
+    .page-layout {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    padding: 24px;
+    }
+
+    .main-content {
+    flex: 1;
+    min-width: 0; /* prevents flex item from overflowing on wide grids/images */
+    }
+
+    .trending-sidebar {
+    width: 480px;
+    flex-shrink: 0;
+    background: #111;
+    padding: 24px;
+    height: 100%;
+    }
+    </style>
                         
 {% endblock %} 

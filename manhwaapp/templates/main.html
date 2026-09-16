@@ -14,6 +14,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Mulish:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='elegant-icons.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 
     <!-- Css Styles -->
@@ -40,7 +43,7 @@
     </div>
 
     <!-- Header Section Begin -->
-    <header class="header">
+    <header class="header" style="  border-bottom: 1px solid rgb(110, 110, 110); border-radius: 5px; background-color: #212121;">
         <div class="container">
             <div class="row">
                 <div class="col-lg-2">
@@ -51,7 +54,7 @@
                     </div>
                 </div>
                 <div class="col-lg-5">
-                    <div class="header__nav">
+                    <div class="header__nav" style="margin-left: -300px;">
                         <nav class="header__menu mobile-menu">
                             <ul>
                                 <li class="active"><a href="{{url_for('home')}}">Homepage</a></li>
