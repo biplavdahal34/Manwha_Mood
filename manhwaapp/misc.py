@@ -106,10 +106,7 @@ def get_page_id(chapter_id):
 
     r = requests.get(f"{base_url}/at-home/server/{chapter_id}"
     )
-    if r.status_code != 200:
-        print("at-home error:", r.status_code, r.text)
     r_json = r.json()
-    print(r_json)
     host = r_json["baseUrl"]
     chapter_hash = r_json["chapter"]["hash"]
     data = r_json["chapter"]["data"]

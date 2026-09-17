@@ -135,11 +135,9 @@ def home():
             for manga in latest_popular:
                 manga_id_popular = manga["id"]
                 trending_cover_rel = next((rel for rel in manga['relationships'] if rel['type'] == "cover_art"), None)
-                print("Cover relationship:", trending_cover_rel)
                 if trending_cover_rel and "attributes" in trending_cover_rel:
                     filename = trending_cover_rel['attributes']['fileName']
                     trending_cover_url.append(f'https://uploads.mangadex.org/covers/{manga_id_popular}/{filename}')
-            print(trending_cover_url)
 
     return render_template('home.html', popular_titles = popular_manhwa_titles, latest_titles = latest_manhwa_titles, trending_titles = trending_titles, popular_manhwas = popular["response"], latest_manhwas = latest['response'], trending_manhwas = latest_popular, api_ok= api_ok,
                             searched = bool(popular), popular_cover_url = popular_cover_url, latest_cover_url = latest_cover_url, trending_cover_url = trending_cover_url, genre_popular = genre_popular, genre_latest= genre_latest, genre_trending = genre_trending)
