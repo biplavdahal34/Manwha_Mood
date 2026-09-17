@@ -15,7 +15,7 @@ class User(db.Model, UserMixin):
 
 class Manhwa(db.Model):
     id = db.Column(db.Integer, primary_key= True)
-    cover_image = db.Column()
+    cover_image = db.Column(db.String)
     title = db.Column(db.String, nullable = False)
     genre = db.Column(db.String, nullable = False)
     ratings_number  = db.Column (db.Integer, nullable = False)
