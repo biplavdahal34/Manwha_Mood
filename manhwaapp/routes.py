@@ -21,7 +21,7 @@ def register():
         session['otp_made_time'] = time.time()
         session['email'] = form.email.data
         session['username'] = form.username.data
-        session['password'] = bcrypt.hashpw(form.password.data.encode('utf-8'), bcrypt.gensalt())
+        session['password'] = bcrypt.hashpw(form.password.data.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
         return redirect(url_for('otp_filling_page'))
     return render_template("register.html", form = form)
 
