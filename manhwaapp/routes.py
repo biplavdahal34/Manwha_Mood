@@ -10,7 +10,7 @@ from manhwaapp.misc import latest_list, popular_list, get_manhwa_byid, get_manhw
 @app.route("/spage")
 def startpage():
     return render_template("startpage.html")
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 @app.route("/register", methods=['GET','POST'])
 def register():
     if current_user.is_authenticated:
