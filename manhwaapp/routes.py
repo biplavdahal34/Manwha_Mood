@@ -121,6 +121,7 @@ def home():
     trending_titles = []
     genres_trending = []
     latest_popular = get_latest_popular(limit=10,days_back=7)
+    print(latest_popular)
     for manhwa in latest_popular:
         alttitles =  manhwa['attributes']['altTitles']
         genre_trending= [tag['attributes']['name']['en'] for tag in manhwa['attributes']['tags'] if tag['attributes']['group'] == 'genre'][:2]
